@@ -1,0 +1,688 @@
+*{box-sizing:border-box}
+:root{
+  --bg:#eaf1fb;--card:#fff;--text:#172033;--muted:#5c6b7a;--primary:#2563eb;
+  --good:#15803d;--bad:#b91c1c;--warn:#b45309;--line:#d7e0ea;--slot:#f8fafc;
+  --gold:#f59e0b;--locked:#94a3b8
+}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(37,99,235,.18),transparent 30%),linear-gradient(180deg,#dfeeff 0%,var(--bg) 45%,#f8fbff 100%)}
+.app{max-width:1260px;margin:0 auto;padding:18px}
+.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.topbar h1{margin:0;font-size:32px}.topbar p{margin:4px 0 0;color:var(--muted)}
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.badge,.coins{border-radius:999px;padding:10px 14px;font-weight:800;white-space:nowrap}.badge{background:var(--text);color:#fff}.coins{background:#fffbeb;color:#78350f;border:1px solid #fcd34d}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 34px rgba(20,40,80,.10)}
+.hero{max-width:900px;margin:52px auto;text-align:center}.logo{width:74px;height:74px;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;background:linear-gradient(145deg,#2563eb,#0f172a);color:#fff;font-size:26px;font-weight:900;box-shadow:0 14px 28px rgba(37,99,235,.25)}
+h2{margin-top:0;font-size:28px}h3{margin-top:0}p{line-height:1.5}
+.info,.case,.hint,.mode{background:#f1f5f9;border:1px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;text-align:left}
+.case{background:#eff6ff;border-color:#bfdbfe}.mode{background:#e0f2fe;border-color:#7dd3fc;color:#075985;font-weight:800}
+.primary,.secondary,.shopButton,.rewardButton{border:0;border-radius:14px;padding:12px 18px;font-size:16px;font-weight:800;cursor:pointer}
+.primary{background:var(--primary);color:white}.secondary{background:#e2e8f0;color:var(--text)}.shopButton{background:var(--gold);color:#451a03}.rewardButton{background:#dcfce7;color:#14532d}
+button:disabled{opacity:.55;cursor:not-allowed}.buttonRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.grid,.shopGrid{display:grid;grid-template-columns:repeat(3,minmax(240px,1fr));gap:16px}
+.job,.shopItem,.rewardItem{border:1px solid var(--line);border-radius:20px;padding:18px;background:white;box-shadow:0 8px 22px rgba(15,23,42,.08);position:relative;overflow:hidden}
+.job:before,.shopItem:before,.rewardItem:before{content:"";position:absolute;top:0;left:0;height:8px;width:100%;background:var(--primary)}
+.job.locked{background:#f1f5f9;color:#64748b}.job.locked:before{background:var(--locked)}
+.job.done{background:#f0fdf4}.job.done:before{background:var(--good)}
+.shopItem.owned,.rewardItem.owned{background:#f0fdf4}.shopItem.owned:before,.rewardItem.owned:before{background:var(--good)}
+.shopItem.recommended:before{background:var(--gold)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pill{background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe;border-radius:999px;padding:6px 10px;font-size:13px;font-weight:800}
+.pill.done{background:#dcfce7;color:#14532d;border-color:#86efac}.pill.locked{background:#e2e8f0;color:#475569;border-color:#cbd5e1}.pill.warn{background:#fef3c7;color:#78350f;border-color:#fde68a}.pill.diff{background:#ede9fe;color:#4c1d95;border-color:#c4b5fd}
+.layout{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}
+.panel{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0}
+.deck{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(245,158,11,.08)),#f8fafc;position:sticky;top:12px}
+.deckHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.count{background:#0f172a;color:white;border-radius:999px;padding:7px 10px;font-size:13px;font-weight:800}
+.cards{display:flex;flex-wrap:wrap;gap:12px;align-content:flex-start}
+.gameCard{width:138px;min-height:98px;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,250,252,1));border:2px solid #cbd5e1;border-radius:16px;padding:10px;cursor:pointer;user-select:none;font-weight:800;box-shadow:0 7px 16px rgba(15,23,42,.13),inset 0 0 0 2px rgba(255,255,255,.75);transition:transform .1s,border-color .1s,background .1s;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.gameCard:before{content:"";position:absolute;left:0;top:0;height:7px;width:100%;background:var(--primary)}
+.gameCard[data-kind="geraet"]:before{background:#2563eb}.gameCard[data-kind="netz"]:before{background:#16a34a}.gameCard[data-kind="router"]:before{background:#0f766e}.gameCard[data-kind="server"]:before{background:#7c3aed}.gameCard[data-kind="stoerung"]:before{background:#dc2626}.gameCard[data-kind="falsch"]:before{background:#64748b}
+.gameCard:hover{transform:translateY(-2px) rotate(-.4deg)}.gameCard.selected{border-color:var(--gold);background:#fffbeb;transform:translateY(-3px) rotate(.7deg)}
+.icon{font-size:26px;margin:6px 0}.ctext{font-size:14px;line-height:1.25}
+.drop,.slot,.netSlot{border:2px dashed #94a3b8;background:var(--slot);border-radius:16px;min-height:84px;padding:10px;margin-bottom:12px}
+.drop{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;align-content:flex-start}.drop h4{flex:0 0 100%;margin:0}.drop .gameCard{width:138px}
+.dragOver{border-color:var(--primary);background:#dbeafe}.correct{border-color:var(--good)!important;background:#dcfce7!important}.wrong{border-color:var(--bad)!important;background:#fee2e2!important}
+.feedback{border-radius:14px;padding:14px;margin:16px 0 0;display:none}.feedback.good{display:block;background:#dcfce7;border:1px solid #86efac;color:#14532d}.feedback.bad{display:block;background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d}.feedback.warn{display:block;background:#fef3c7;border:1px solid #fde68a;color:#78350f}
+.route{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px}.route .slot{min-height:132px;margin-bottom:0}.slotLabel{color:var(--muted);font-size:13px;margin-bottom:8px;font-weight:800}
+.networkWrap{position:relative;min-height:760px;margin-top:12px}.networkSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.networkSvg line{stroke:#2563eb;stroke-width:4;stroke-linecap:round}
+.networkMap{position:relative;min-height:800px}.netSlot{position:absolute;width:168px;min-height:116px;border-radius:18px}
+.connectionSelected{box-shadow:0 0 0 4px rgba(245,158,11,.35)}
+.slot-0{left:50%;top:0;transform:translateX(-50%)}.slot-1{left:10%;top:130px}.slot-2{right:10%;top:130px}.slot-3{left:50%;top:250px;transform:translateX(-50%)}.slot-4{left:5%;top:390px}.slot-5{right:5%;top:390px}.slot-6{left:16%;top:540px}.slot-7{right:16%;top:540px}.slot-8{left:50%;top:680px;transform:translateX(-50%)}
+.trophies{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.trophy{background:#fef3c7;border:1px solid #fcd34d;border-radius:999px;padding:8px 12px;font-weight:800;color:#78350f}
+textarea{width:100%;min-height:110px;border:1px solid #cbd5e1;border-radius:14px;padding:12px;margin-top:10px;font-size:16px;font-family:Arial,Helvetica,sans-serif}
+.summary{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin:16px 0;text-align:left}
+@media(max-width:1050px){.grid,.shopGrid{grid-template-columns:repeat(2,minmax(240px,1fr))}.layout{grid-template-columns:1fr}.deck{position:static}}
+@media(max-width:760px){.grid,.shopGrid{grid-template-columns:1fr}.route{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.hero{margin:20px auto}.gameCard{width:calc(50% - 8px)}.networkWrap,.networkMap{min-height:900px}.netSlot{width:100%;position:static;margin-bottom:12px;transform:none!important}.slot-0,.slot-1,.slot-2,.slot-3,.slot-4,.slot-5,.slot-6,.slot-7,.slot-8{left:auto;right:auto;top:auto}.networkSvg{display:none}}
+@media print{body{background:white}.topbar,button,.cards{display:none!important}.card{box-shadow:none;border:1px solid #ccc}}
+
+
+/* V6: Linienwerkzeug oben links im Netzwerkauftrag */
+.networkToolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+.networkToolbar h3{
+  margin:0;
+}
+.lineTool{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  border:2px solid #cbd5e1;
+  background:#ffffff;
+  color:#0f172a;
+  font-size:28px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(15,23,42,.12);
+}
+.lineTool.active{
+  background:#f59e0b;
+  color:#451a03;
+  border-color:#fbbf24;
+  box-shadow:0 0 0 4px rgba(245,158,11,.28), 0 7px 16px rgba(15,23,42,.12);
+}
+
+
+/* V7: Prüfen direkt oben rechts im Netzwerkbereich und schöner Linienbutton */
+.networkToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.networkToolbar h3{
+  margin:0;
+}
+.networkActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.lineTool{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  border:2px solid #cbd5e1;
+  background:#ffffff;
+  color:#0f172a;
+  cursor:pointer;
+  box-shadow:0 7px 16px rgba(15,23,42,.12);
+  display:grid;
+  place-items:center;
+  padding:0;
+}
+.lineTool svg{
+  width:32px;
+  height:32px;
+}
+.lineTool line{
+  stroke:currentColor;
+  stroke-width:4;
+  stroke-linecap:round;
+}
+.lineTool circle{
+  fill:currentColor;
+}
+.lineTool.active{
+  background:#f59e0b;
+  color:#451a03;
+  border-color:#fbbf24;
+  box-shadow:0 0 0 4px rgba(245,158,11,.28), 0 7px 16px rgba(15,23,42,.12);
+}
+.smallCheck{
+  height:48px;
+  padding:0 18px;
+}
+
+
+/* V8: Obere Aktionsleisten für Sortier- und Netzwerkaufträge */
+.taskToolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.taskToolbar h2{
+  margin:0;
+}
+.taskActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+@media(max-width:760px){
+  .taskToolbar{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+
+
+/* V9: Schnellzugriff oben im Auftragsmenü */
+.topMenuActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:14px 0 18px;
+}
+
+/* V9: Kategorisiertes Lager */
+.lagerGroup{
+  background:#f8fafc;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin:14px 0;
+}
+.lagerGroup h3{
+  margin:0 0 12px;
+}
+
+
+/* V10: Kartenanzahl kompakter und ohne unschönen Umbruch */
+.count{
+  white-space:nowrap;
+  min-width:max-content;
+  font-size:12px;
+  padding:7px 12px;
+}
+.deckHead{
+  align-items:flex-start;
+}
+.deckHead h3{
+  margin:0;
+  line-height:1.2;
+}
+
+
+/* V12: Lagerkarten im Auftrag nach Kategorien gruppieren */
+.pileGroup{
+  background:rgba(255,255,255,.65);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  margin:10px 0;
+}
+.pileGroup h4{
+  margin:0 0 8px;
+  color:var(--muted);
+  font-size:13px;
+  letter-spacing:.02em;
+}
+.pileGroup .cards{
+  gap:10px;
+}
+
+
+/* V14: Karten in belegten Netzwerk-Slots lassen sich leichter tauschen */
+.netSlot .gameCard{
+  margin:auto;
+}
+
+
+/* V15: Sichtbares Fehler-Pop-up */
+.errorPopup{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.38);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:9999;
+}
+.errorPopupCard{
+  width:min(560px, 100%);
+  background:#fff;
+  border:3px solid #ef4444;
+  border-radius:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.28);
+  padding:20px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:16px;
+  align-items:center;
+}
+.errorPopupIcon{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#ef4444;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  font-weight:900;
+}
+.errorPopupText strong{
+  font-size:20px;
+}
+.errorPopupText p{
+  margin:6px 0 0;
+}
+
+/* V15: Im Liniengame zwei Karten pro Reihe */
+#groupedPile .cards{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+#groupedPile .gameCard{
+  width:100%;
+  min-width:0;
+}
+#groupedPile .ctext{
+  font-size:13px;
+}
+
+/* V15: Raumkarten */
+.gameCard[data-kind="raum"]:before{
+  background:#ea580c;
+}
+
+@media(max-width:760px){
+  #groupedPile .cards{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .errorPopupCard{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+  .errorPopupIcon{
+    margin:0 auto;
+  }
+}
+
+
+/* V16: Mehrstufiger Raumauftrag */
+.roomProgress{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  margin:10px 0 14px;
+}
+.roomProgress span{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#e2e8f0;
+  color:#475569;
+  font-weight:900;
+}
+.roomProgress span.active{
+  background:#2563eb;
+  color:#fff;
+}
+.roomProgress span.done{
+  background:#16a34a;
+  color:#fff;
+}
+.roomNetworkWrap,
+.roomNetworkMap{
+  min-height:520px;
+}
+.stagePopup{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.32);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:9999;
+}
+.stagePopupCard{
+  width:min(560px,100%);
+  background:#fff;
+  border:3px solid #22c55e;
+  border-radius:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.28);
+  padding:20px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:16px;
+  align-items:center;
+}
+.stagePopupIcon{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#16a34a;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  font-weight:900;
+}
+@media(max-width:760px){
+  .stagePopupCard{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+  .stagePopupIcon{
+    margin:0 auto;
+  }
+}
+
+
+/* V17: Raumzonen statt Unterlevel */
+.roomZonePanel{
+  background:#f8fafc;
+}
+.roomZoneGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.roomBox{
+  border:3px solid #cbd5e1;
+  border-radius:22px;
+  padding:16px;
+  background:#ffffff;
+  box-shadow:0 8px 22px rgba(15,23,42,.08);
+}
+.roomBox h3{
+  margin:0 0 6px;
+}
+.roomBox p{
+  margin:0 0 14px;
+  color:var(--muted);
+  font-size:14px;
+}
+.livingBox{
+  border-color:#fb923c;
+  background:#fff7ed;
+}
+.workBox{
+  border-color:#60a5fa;
+  background:#eff6ff;
+}
+.networkBox{
+  grid-column:1 / -1;
+  border-color:#22c55e;
+  background:#f0fdf4;
+}
+.roomSlots{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+.roomSlots.two{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+.roomSlot{
+  min-height:128px;
+  border:2px dashed #94a3b8;
+  background:rgba(255,255,255,.72);
+  border-radius:18px;
+  padding:10px;
+  display:grid;
+  place-items:center;
+}
+.roomSlot.dragOver{
+  border-color:var(--primary);
+  background:#dbeafe;
+}
+.roomSlot .gameCard{
+  width:100%;
+  min-height:100px;
+}
+@media(max-width:900px){
+  .roomZoneGrid{
+    grid-template-columns:1fr;
+  }
+  .networkBox{
+    grid-column:auto;
+  }
+}
+@media(max-width:760px){
+  .roomSlots,
+  .roomSlots.two{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* V18: Klare Hilfebox im Linienauftrag */
+.howToBox{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  color:#7c2d12;
+}
+.howToBox ol{
+  margin:8px 0 0 20px;
+  padding:0;
+}
+.howToBox li{
+  margin:4px 0;
+}
+
+/* V18: WG-Zonen */
+.roomSlots.four{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+.roomSlots.one{
+  grid-template-columns:1fr;
+  max-width:260px;
+}
+.roomBox.livingBox h3::before{
+  content:"🏠 ";
+}
+.roomBox.workBox h3::before{
+  content:"📶 ";
+}
+.roomBox.networkBox h3::before{
+  content:"🌐 ";
+}
+
+
+/* V19: WG-Auftrag mit Linien */
+.wgWrap{
+  position:relative;
+  min-height:700px;
+}
+.wgSvg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:visible;
+}
+.wgSvg line{
+  stroke:#2563eb;
+  stroke-width:4;
+  stroke-linecap:round;
+}
+.roomSlot.connectionSelected{
+  box-shadow:0 0 0 4px rgba(245,158,11,.35);
+}
+.roomHint{
+  margin-top:12px;
+}
+@media(max-width:760px){
+  .wgWrap{
+    min-height:auto;
+  }
+  .wgSvg{
+    display:none;
+  }
+}
+
+
+/* V26: Großes Schulnetz – deutlich mehr Abstand */
+.megaSchoolPanel{
+  background:#f8fafc;
+}
+.megaSchoolHint{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1e3a8a;
+  border-radius:16px;
+  padding:12px;
+  margin-bottom:12px;
+}
+.megaWrap{
+  min-height:1560px;
+}
+.megaMap{
+  position:relative;
+  min-height:1520px;
+}
+
+/* Jetzt überall nur noch 3 Slots pro Reihe für mehr Platz */
+
+/* Reihe 1: Zentrale */
+.mega-0{left:8%;top:20px}                               /* Internet */
+.mega-1{left:50%;top:20px;transform:translateX(-50%)}  /* Admin-Router */
+.mega-2{right:8%;top:20px}                              /* Schulserver */
+
+/* Reihe 2: Unterrouter */
+.mega-3{left:8%;top:300px}                              /* Lehrer-Router */
+.mega-4{left:50%;top:300px;transform:translateX(-50%)} /* Schüler-Router */
+.mega-5{right:8%;top:300px}                             /* Lab-Router */
+
+/* Reihe 3: Lehrerzimmer + ein Teil des Klassenraums */
+.mega-6{left:8%;top:580px}                              /* Lehrer-Laptop */
+.mega-7{left:50%;top:580px;transform:translateX(-50%)} /* Drucker */
+.mega-8{right:8%;top:580px}                             /* Smart-TV */
+
+/* Reihe 4: restliche Schülergeräte + erster PC */
+.mega-9{left:8%;top:860px}                              /* iPad 1 */
+.mega-10{left:50%;top:860px;transform:translateX(-50%)}/* iPad 2 */
+.mega-11{right:8%;top:860px}                            /* PC 1 */
+
+/* Reihe 5: restlicher Computerraum */
+.mega-12{left:8%;top:1140px}                            /* PC 2 */
+.mega-13{left:50%;top:1140px;transform:translateX(-50%)}/* PC 3 */
+.mega-14{right:8%;top:1140px}                           /* PC 4 */
+
+
+/* V27: Eigenes Level statt Belohnungsshop */
+.unlockBox{
+  border-radius:18px;
+  padding:14px;
+  margin:14px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  border:1px solid var(--line);
+}
+.unlockBox.success{
+  background:#ecfdf5;
+  border-color:#86efac;
+  color:#14532d;
+}
+.unlockBox.locked{
+  background:#f8fafc;
+  color:#475569;
+}
+.customEditor{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:16px 0;
+}
+.textInput,.textArea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px 12px;
+  margin:6px 0 14px;
+  font:inherit;
+  background:#fff;
+}
+.textArea{
+  min-height:120px;
+  resize:vertical;
+}
+.fullWidth{
+  width:100%;
+}
+.customItemList{
+  display:grid;
+  gap:10px;
+}
+.customItemRow{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:12px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  background:#f8fafc;
+}
+.miniCard{
+  width:150px;
+  min-height:86px;
+  cursor:default;
+}
+.customWrap{
+  min-height:720px;
+}
+.customMap{
+  position:relative;
+  min-height:700px;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(150px,1fr));
+  gap:28px;
+  align-content:start;
+  padding:10px;
+}
+.customMap .netSlot{
+  position:relative;
+  left:auto;
+  right:auto;
+  top:auto;
+  transform:none;
+  width:auto;
+  min-height:122px;
+  margin:0;
+}
+@media(max-width:900px){
+  .customEditor{
+    grid-template-columns:1fr;
+  }
+  .unlockBox{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .customMap{
+    grid-template-columns:repeat(2, minmax(140px,1fr));
+  }
+}
+@media(max-width:760px){
+  .customMap{
+    display:block;
+    min-height:auto;
+  }
+  .customMap .netSlot{
+    margin-bottom:12px;
+  }
+}
+
+
+
+
+
+/* V29: Feedback für eigene Level */
+.feedback strong{
+  font-weight:900;
+}
